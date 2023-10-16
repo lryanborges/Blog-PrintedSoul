@@ -1,16 +1,16 @@
 module Blog exposing (..)
 
 import Browser
-import Html exposing (Html, div, h1, p, span, text)
-import Html.Attributes exposing (placeholder, class)
+import Html exposing (Html, div, h1, p, span, text, input)
+import Html.Attributes exposing (placeholder, class, value, style)
 import Html.Events exposing (onClick, onInput)
-import Html
-
--- <link rel="stylesheet" type="text/css" href="style.css">
+import List exposing (filter, member)
+import Maybe exposing (withDefault)
 
 -- Model
 type alias Article =
-    { title : String
+    { id : Int
+    , title : String
     , content : String
     , isFavorited : Bool
     }
@@ -20,18 +20,22 @@ type alias Model =
     , newArticleTitle : String
     , newArticleContent : String
     , showFavorites : Bool
+    , newArticleError : Maybe String
+    , nextId : Int
     }
 
 init : Model
 init =
     { articles =
-        [ { title = "🫡🫡🫡🫡", content = "prontos para arrasar no trabalho", isFavorited = False }
-        , { title = "olá eu sou um título", content = "e eu o conteúdo", isFavorited = False }
-        , { title = "outro títuloo", content = "e a ideia desse conteúdo é realmente fazer uma quebra de linha", isFavorited = False }
+        [ { id = 1, title = "😀😀😀😀", content = "prontos para arrasar no trabalho", isFavorited = False }
+        , { id = 2, title = "olá eu sou um título", content = "e eu o conteúdo", isFavorited = False }
+        , { id = 3, title = "outro títuloo", content = "e a ideia desse conteúdo é realmente fazer uma quebra de linha", isFavorited = False }
         ]
     , newArticleTitle = ""
     , newArticleContent = ""
     , showFavorites = False
+    , newArticleError = Nothing
+    , nextId = 4
     }
 
 -- Msg
@@ -42,8 +46,8 @@ type Msg
     | AddNewArticle
     | ToggleFavorite Article
     | ToggleShowFavorites
+    | DeleteArticle Article
 
--- Update
 update : Msg -> Model -> Model
 update msg model =
     case msg of
@@ -57,17 +61,21 @@ update msg model =
             { model | newArticleContent = newContent }
 
         AddNewArticle ->
-            let
-                newArticle =
-                    { title = model.newArticleTitle
-                    , content = model.newArticleContent
-                    , isFavorited = False
-                    }
+            if String.isEmpty model.newArticleTitle || String.isEmpty model.newArticleContent then
+                { model | newArticleError = Just "Título e conteúdo não podem estar vazios" }
+            else
+                let
+                    newArticle =
+                        { id = model.nextId
+                        , title = model.newArticleTitle
+                        , content = model.newArticleContent
+                        , isFavorited = False
+                        }
 
-                updatedArticles =
-                    newArticle :: model.articles
-            in
-            { model | articles = updatedArticles, newArticleTitle = "", newArticleContent = "" }
+                    updatedArticles =
+                        newArticle :: model.articles
+                in
+                { model | articles = updatedArticles, newArticleTitle = "", newArticleContent = "", newArticleError = Nothing, nextId = model.nextId + 1 }
 
         ToggleFavorite article ->
             let
@@ -86,29 +94,42 @@ update msg model =
         ToggleShowFavorites ->
             { model | showFavorites = not model.showFavorites }
 
+        DeleteArticle article ->
+            { model | articles = List.filter (\a -> a.id /= article.id) model.articles }
+
 -- View
 viewArticle : Article -> Html Msg
 viewArticle article =
     div [ class "article" ]
-        [ div [ class "article-header" ]
-            [ h1 [ class "article-title" ] [ text article.title ]
-            , div [ class "favorite-icon" ]
-                [ if article.isFavorited then
-                    span [ class "favorite", onClick (ToggleFavorite article) ] [ text "❤️" ]
-                  else
-                    span [ class "favorite", onClick (ToggleFavorite article) ] [ text "🖤" ]
-                ]
-            ]
+        [ h1 [ class "article-title" ]
+            [ text article.title ]
         , p [] [ text article.content ]
+        , div [ class "favorite-icon" ]
+            [ if article.isFavorited then
+                span [ class "favorite", onClick (ToggleFavorite article) ] [ text "❤️" ]
+            else
+                span [ class "favorite", onClick (ToggleFavorite article) ] [ text "🖤" ]
+            ]
+        , div [ class "edit-buttons" ]
+            [ span [ class "edit-button", onClick (DeleteArticle article) ] [ text "Excluir" ]
+            ]
         ]
 
 view : Model -> Html Msg
 view model =
     div []
-        [ div [ class "container" ]
+        [ div [ class "header" ]
+            [ h1 [ class "header-title" ] [ text "Blog Printed Soul" ]
+            ]
+        , div [ class "container" ]
             [ div [ class "form-container" ]
-                [ Html.input [ placeholder "Título", class "input-field", Html.Attributes.value model.newArticleTitle, Html.Events.onInput UpdateNewArticleTitle ] []
-                , Html.input [ placeholder "Conteúdo", class "input-field", Html.Attributes.value model.newArticleContent, Html.Events.onInput UpdateNewArticleContent ] []
+                [ Html.input [ placeholder "Título", class "input-field", value model.newArticleTitle, onInput UpdateNewArticleTitle ] []
+                , Html.input [ placeholder "Conteúdo", class "input-field", value model.newArticleContent, onInput UpdateNewArticleContent ] []
+                , case model.newArticleError of
+                    Just errorMsg ->
+                        div [ class "error-message" ] [ text errorMsg ]
+                    Nothing ->
+                        text ""
                 ]
             , div [ class "button-container" ]
                 [ Html.button [ class "add-button", onClick AddNewArticle ] [ text "Publicar" ]
@@ -121,7 +142,6 @@ view model =
                 [ text (if model.showFavorites then "Mostrar Todos" else "Meus Favoritos") ]
             ]
         ]
-
 
 main =
     Browser.sandbox { init = init, update = update, view = view }

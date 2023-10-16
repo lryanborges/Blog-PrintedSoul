@@ -1,9 +1,31 @@
+body{
+    font-family: 'Poppins', sans-serif;
+    margin: 0px;
+    padding: 0px;
+}
+
+.header{
+    align-items: center;
+    background-color: #e1d5e7;
+    text-align: center;
+    padding: 10px;
+    padding-top: 40px;
+    color: #fff;
+}
+
+.header-title{
+    align-items: center;
+    font-size: 50px;
+    margin: 0px;
+    padding: 0px;
+}
+
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    background-color: #e1d5e7; 
+    background-color: #e1d5e7;
     height: 100vh;
 }
 
@@ -11,7 +33,7 @@
     width: 300px;
     padding: 15px;
     border-radius: 10px;
-    background-color: #e1d5e7; 
+    background-color: #e1d5e7;
 }
 
 .input-field {
@@ -23,7 +45,7 @@
 }
 
 .button-container {
-    width: 100%; 
+    width: 100%;
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
@@ -35,7 +57,7 @@
     border: none;
     cursor: pointer;
     border-radius: 10px;
-    background-color: #8e44ad; 
+    background-color: #8e44ad;
     color: #fff;
 }
 
@@ -52,32 +74,42 @@
 }
 
 .article {
-    width: 23%; 
+    width: 23%;
     margin-bottom: 20px;
     margin: 1%;
     padding: 10px;
-    border: 1px solid #dcdcdc; 
+    border: 1px solid #dcdcdc;
     box-sizing: border-box;
     max-width: 100%;
-    background-color: #ecf0f1; 
+    background-color: #ecf0f1;
     position: relative
 }
 
 .article h1 {
     max-width: 100%;
     word-wrap: break-word;
-    color: #2c3e50; 
+    color: #2c3e50;
 }
 
 .article p {
-    max-width: 100%; 
+    max-width: 100%;
     word-wrap: break-word;
-    color: #333; 
+    color: #333;
 }
 
 .favorite {
     cursor: pointer;
     font-size: 24px;
+}
+
+.edit-button{
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    background-color: red;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 5px;
+    color: #fff;
 }
 
 .favorite-icon {
@@ -99,14 +131,14 @@
 .toggle-favorites-button {
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #8e44ad; 
-    color: #fff; 
+    background-color: #8e44ad;
+    color: #fff;
     border: none;
     cursor: pointer;
     border-radius: 10px;
 }
 
 .toggle-favorites-button:hover {
-    background-color: #7d3c98; 
+    background-color: #7d3c98;
 }
 
