@@ -7,6 +7,8 @@ import Html.Events exposing (onClick, onInput)
 import List exposing (filter, member)
 import Maybe exposing (withDefault)
 
+-- <link rel="stylesheet" type="text/css" href="style.css">
+
 -- Model
 type alias Article =
     { id : Int
